@@ -1,4 +1,4 @@
-### addItems Function 🎁 (Minecraft Bedrock Edition)
+### addItems Function 🎁
 
 **Overview:**
 The `addItems` function streamlines item management in Minecraft Bedrock server plugins. It simplifies the process of adding items to a player's inventory, enhancing gameplay and user experience.
