@@ -6,49 +6,40 @@ This is a custom database implementation for Minecraft Bedrock server using the 
 
 This module exports a database object directly. To use it, require the module in your project:
 
-```javascript
-import Database from './Database.js'
-```
+`import Database from './Database.js'`
 
 ### Storing Data
 
-To store data in the database, use the `set` method:
+To store data in the database, use the `set` method. The `set` method also accepts a third optional parameter, a boolean value, determining where the data should be stored. If `boolean` is `true`, the data is stored globally in the `world` DynamicProperty. If `boolean` is `false`, the data is stored individually in each player's DynamicProperty, default value is true.
 
-```javascript
-Database.set('key', 'value');
-```
+`Database.set('key', 'value');` same thing as `Database.set('key', 'value', true);`
+
+`Database.set('key', 'value', false);` 
+
 
 ### Retrieving Data
 
 To retrieve data from the database, use the `get` method:
 
-```javascript
-const value = Database.get('key');
-```
+`const value = Database.get('key');`
 
 ### Checking if a Key Exists
 
 To check if a key exists in the database, use the `has` method:
 
-```javascript
-const exists = Database.has('key');
-```
+`const exists = Database.has('key');`
 
 ### Deleting Data
 
 To delete data from the database, use the `delete` method:
 
-```javascript
-Database.delete('key');
-```
+`Database.delete('key');`
 
 ### Getting All Entries
 
 To retrieve all key-value pairs from the database, use the `entries` property:
 
-```javascript
-const allEntries = Database.entries;
-```
+`const allEntries = Database.entries;`
 
 ## Author
 
