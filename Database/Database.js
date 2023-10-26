@@ -38,5 +38,4 @@ Object.defineProperty(globalThis, 'Database', {
         };
     }
 });
-
-module.exports = globalThis.Database;
+export default globalThis.Database;
