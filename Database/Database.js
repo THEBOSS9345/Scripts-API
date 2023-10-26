@@ -5,12 +5,13 @@ Object.defineProperty(globalThis, 'Database', {
         let database = [...new Set([...world.getDynamicPropertyIds() || [], ...(players.flatMap(player => player.getDynamicPropertyIds()) || [])])].reduce((acc, id) => ({
             ...acc,
             world: world.getDynamicPropertyIds().includes(id) ? { ...acc.world, [id]: world.getDynamicProperty(id) } : acc.world,
-            player: !world.getDynamicPropertyIds().includes(id) ? { ...acc.player, [id]: players.map(player => player.getDynamicProperty(id)) } : acc.player
+            player: !world.getDynamicPropertyIds().includes(id) ? { ...acc.player, [id]: players.map(player => player.getDynamicProperty(id))[0] } : acc.player
         }), { world: {}, player: {} });
 
         return {
             set(key, value, boolean = true) {
-                if (typeof key !== 'string' || typeof value !== 'string') return console.error(`Invalid input: ${typeof key === 'string' ? `value: ${value}` : `key: ${key}`}`);
+                if (typeof key !== 'string') return console.error(`Invalid input: ${typeof key === 'string' ? `value: ${value}` : `key: ${key}`}`);
+                if (typeof value !== 'number' && typeof value !== 'string' && typeof value !== 'boolean' && typeof value !== 'object') return console.error(`Invalid input: value must be a number, string, boolean, or object.`);
                 boolean ? database.world[key] = value : database.player[key] = value;
                 this.save();
             },
