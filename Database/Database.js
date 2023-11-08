@@ -1,4 +1,4 @@
-import { world } from '@minecraft/server';
+import { world, system } from '@minecraft/server';
 Object.defineProperty(globalThis, 'Database', {
     get: function () {
         const players = world.getPlayers();
@@ -71,7 +71,7 @@ Object.defineProperty(globalThis, 'Database', {
            * @type {object}
            */
             get entries() {
-                return database;
+                return database
             },
             /**
              * Saves world and player context data to their respective contexts.
@@ -83,8 +83,8 @@ Object.defineProperty(globalThis, 'Database', {
              * Database.save();
              */
             save() {
-                for (const key in database.world) world.setDynamicProperty(key, database.world[key]);
-                for (const key in database.player) players.forEach(player => player.setDynamicProperty(key, database.player[key]));
+                for (const key in database.world) world.setDynamicProperty(key, database.world[key]), (database.world[key] == null) ? delete database.world[key] : null
+                for (const key in database.player) players.forEach(player => player.setDynamicProperty(key, database.player[key])), (database.player[key] == null) ? delete database.player[key] : null
             },
             /**
             * Iterates over all database entries and executes a callback function for each entry.
@@ -99,8 +99,17 @@ Object.defineProperty(globalThis, 'Database', {
             * });
             */
             forEach(callback, boolean = true) {
-                const combinedDatabase = { ...database.world, ...database.player };
-                return boolean ? combinedDatabase.world.hasOwnProperty(key) ? callback(key, combinedDatabase.world[key], combinedDatabase) : null : combinedDatabase.player.hasOwnProperty(key) ? callback(key, combinedDatabase.player[key], combinedDatabase) : null
+            Object.entries(boolean ? database.world : database.player).map(([key, value]) => callback(key, value))
+            },
+            /**
+ * Clears all entries in the database, either in the world or player context.
+ *
+ * @param {boolean} [boolean=true] - If true, clears entries from the world data. If false, clears entries from the player data.
+ * 
+ * the default value is set to true
+ */
+            clear(boolean =  true) {
+             boolean ? Object.keys(database.world).map((value) => this.delete(value)) : Object.keys(database.player).map((value) => this.delete(value));
             }
         };
     }
