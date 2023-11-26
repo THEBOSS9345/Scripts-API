@@ -1,117 +1,47 @@
-import { world, system } from '@minecraft/server';
+import { world, Player } from "@minecraft/server";
+
 Object.defineProperty(globalThis, 'Database', {
     get: function () {
-        const players = world.getPlayers();
-        let database = [...new Set([...world.getDynamicPropertyIds() || [], ...(players.flatMap(player => player.getDynamicPropertyIds()) || [])])].reduce((acc, id) => ({
-            ...acc,
-            world: world.getDynamicPropertyIds().includes(id) ? { ...acc.world, [id]: world.getDynamicProperty(id) } : acc.world,
-            player: !world.getDynamicPropertyIds().includes(id) ? { ...acc.player, [id]: players.map(player => player.getDynamicProperty(id))[0] } : acc.player
-        }), { world: {}, player: {} });
         return {
-
             /**
-            * Sets a value in the database for the given key, either in the world or player context.
-            *
-            * @param {string} key - The key under which the value will be stored.
-            * @param {number|string|boolean|object} value - The value to be stored in the database.
-            * @param {boolean} [boolean=true] - If true, stores the data in the world context. If false, stores it in the player context.
-            */
-            set(key, value, boolean = true) {
-                if (typeof key !== 'string') return console.error(`Invalid input: ${typeof key === 'string' ? `value: ${value}` : `key: ${key}`}`);
-                if (typeof value !== 'number' && typeof value !== 'string' && typeof value !== 'boolean' && typeof value !== 'object') return console.error(`Invalid input: value must be a number, string, boolean, or object.`);
-                boolean ? database.world[key] = value : database.player[key] = value;
-                this.save();
-            },
-            /**
-           * Retrieves the value associated with the given key from the database.
-           *
-           * @param {string} key - The key for which to retrieve the stored value.
-           * @param {boolean} [boolean=true] - If true, retrieves data from the world context. If false, retrieves data from the player context.
-           * @returns {number|string|boolean|object} - The stored value for the specified key.
-            */
-            get(key, boolean = true) {
-                if (typeof key !== 'string' || typeof boolean !== "boolean") return console.warn(`Invalid input: ${typeof key === 'string' ? `key: ${key}` : `boolean: ${boolean}`}`);
-                return boolean ? database.world[key] : database.player[key];
-            },
-
-            /**
-             * Checks if the specified key exists in the database, either in the world or player context.
-             *
-             * @param {string} key - The key to check for existence.
-             * @param {boolean} [boolean=true] - If true, checks for key existence in the world context. If false, checks in the player context.
-             * @returns {boolean} - True if the key exists, false otherwise.
-             */
-            has(key, boolean = true) {
-                if (typeof key !== 'string' || typeof boolean !== "boolean") return console.warn(`Invalid input: ${typeof key === 'string' ? `key: ${key}` : `boolean: ${boolean}`}`);
-                return boolean ? database.world.hasOwnProperty(key) : database.player.hasOwnProperty(key);
-            },
-
-            /**
-            * Deletes the specified key from the database, either in the world or player context.
-            *
-            * @param {string} key - The key to delete.
-            * @param {boolean} [boolean=true] - If true, deletes the key from the world context. If false, deletes it from the player context.
-            */
-            delete(key, boolean = true) {
-                if (typeof key !== 'string' || typeof boolean !== "boolean") return console.warn(`Invalid input: ${typeof key === 'string' ? `key: ${key}` : `boolean: ${boolean}`}`);
-                if (!database.world.hasOwnProperty(key) && !database.player.hasOwnProperty(key)) return console.error(`Key ${key} does not exist in the database.`);
-                boolean ? database.world[key] = null : database.player[key] = null;
-                this.save();
-            },
-            /**
-           * Provides access to all world and player database entries separately.
-           *
-           * @example
-           * // Access world context data
-           * const worldData = Database.entries.world;
-           *
-           * // Access player context data
-           * const playerData = Database.entries.player;
-           *
-           * @type {object}
-           */
-            get entries() {
-                return database
-            },
-            /**
-             * Saves world and player context data to their respective contexts.
-             * 
-             * But you never need to use it.
-             *
+             * Set a value in the database.
+             * @param {string} key - The database key.
+             * @param {boolean | number | string} value - The value to set.
+             * @param {Player} [player=null] - The player for whom to set the database (default: null, i.e., set to world).
              * @example
-             * // Save changes to the database
-             * Database.save();
+             * set('auction', JSON.stringify({'dirt': 1})) // set to world
+             * set('auction', JSON.stringify({'dirt': 1}), player) // set to player
              */
-            save() {
-                for (const key in database.world) world.setDynamicProperty(key, database.world[key]), (database.world[key] == null) ? delete database.world[key] : null
-                for (const key in database.player) players.forEach(player => player.setDynamicProperty(key, database.player[key])), (database.player[key] == null) ? delete database.player[key] : null
+            set(key, value, player = null) {
+                (player || world).setDynamicProperty(key, value);
+            },
+              /**
+             * Get a value from the database.
+             * @param {string} key - The database key.
+             * @param {Player} [player=null] - The player from whom to get the database (default: null, i.e., get from world).
+             * @returns {boolean | number | string | null} The value of the specified key.
+             */
+            get(key, player = null) {
+                return (player || world).getDynamicProperty(key);
+            },
+             /**
+             * Check if a key exists in the database.
+             * @param {string} key - The database key.
+             * @param {Player} [player=null] - The player to check for the key (default: null, i.e., check in world).
+             * @returns {boolean} True if the key exists, false otherwise.
+             */
+            has(key, player = null) {
+                return !!(player || world).getDynamicProperty(key);
             },
             /**
-            * Iterates over all database entries and executes a callback function for each entry.
-            *
-            * @param {Function} callback - A function to be executed for each entry. The callback function receives parameters (key, value, combinedDatabase).
-            * @param {boolean} [boolean=true] - If true, iterates over keys in the world context. If false, iterates in the player context.
-            *
-            * @example
-            * // Log all keys and values in the player context
-            * Database.forEach((key, value) => {
-            *     console.log(key, value);
-            * });
-            */
-            forEach(callback, boolean = true) {
-            Object.entries(boolean ? database.world : database.player).map(([key, value]) => callback(key, value))
-            },
-            /**
- * Clears all entries in the database, either in the world or player context.
- *
- * @param {boolean} [boolean=true] - If true, clears entries from the world data. If false, clears entries from the player data.
- * 
- * the default value is set to true
- */
-            clear(boolean =  true) {
-             boolean ? Object.keys(database.world).map((value) => this.delete(value)) : Object.keys(database.player).map((value) => this.delete(value));
+             * Delete a key from the database.
+             * @param {string} key - The database key to delete.
+             * @param {Player} [player=null] - The player from whom to delete the key (default: null, i.e., delete from world).
+             */
+            delete(key, player = null) {
+                (player || world).setDynamicProperty(key, null);
             }
         };
-    }
+    }   
 });
 export default globalThis.Database;
