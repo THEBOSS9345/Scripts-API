@@ -14,7 +14,7 @@
    To store data to the database, use the `set` method:
    ```js
 
-   Database.set('key', 'value', player) // store data to the world
+   Database.set('key', 'value') // store data to the world
    Database.set('key', 'value', player) // store data to the player 
   
   ```
