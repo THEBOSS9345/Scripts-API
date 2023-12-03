@@ -38,18 +38,3 @@ Object.defineProperty(globalThis, 'ChatCommand', {
     }
 });
 export default globalThis.ChatCommand
-/** ex: 
-ChatCommand.create('Help', 'Help Command: Shows all available commands', ['h', 'help'], false, (player) => {
-    const helpMessage = commands
-        .filter(command => !command.permissions || command.permissions(player))
-        .map(command => {
-            const alias = command.alias.length > 0 ? `[${command.alias.join(', ')}] ` : '';
-            const description = command.description ? command.description : '';
-            return `§7${command.command} - ${alias}${description}`;
-        })
-        .join('\n');
-    player.sendMessage(`§aAvailable Commands\n${helpMessage}\n`);
-});
-ChatCommand.create('test', 'testing command', ['test'], (player => player.hasTag('test')), ((player, args, commandString) => {
-    player.sendMessage(`${player.name}, ${commandString}, ${args}`) 
-}))  */
