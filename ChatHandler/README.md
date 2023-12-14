@@ -11,8 +11,8 @@ Experience effortless communication in Minecraft Bedrock with our ChatCommand Ha
 - **EX**:
 ```js
  import ChatCommand from './ChatCommands.js'
-
-ChatCommand.create('Help', 'Help Command: Shows all available commands', ['h', 'help'], false, (player) => {
+// way 1 to make commands
+ChatCommand.create('Help', 'Help Command: Shows all available commands', ['h', 'help'], false, false, (player) => {
     const helpMessage = commands
         .filter(command => !command.permissions || command.permissions(player))
         .map(command => {
@@ -24,9 +24,17 @@ ChatCommand.create('Help', 'Help Command: Shows all available commands', ['h', '
     player.sendMessage(`§aAvailable Commands\n${helpMessage}\n`);
 });
 
-ChatCommand.create('test', 'testing command', ['test'], (player => player.hasTag('test')), ((player, args, commandString) => {
-    player.sendMessage(`${player.name}, ${commandString}, ${args}`) 
-}))  
+//  way 2 make commands
+ChatCommand.create('test', 'testing command', ['test'], false, (player => player.hasTag('test')), ((player, _, commandString) => {
+    player.sendMessage(`${player.name}, ${commandString}`) 
+}))
+
+// way 3 to make commands
+ChatCommand.create('find', 'find player', ['d ssd ds'], { 'target': 'string' }, false, (player, args) => {
+    const findplayer = world.getPlayers({name: `${args['target']?.split('"')[1]}`})[0]
+    if (!findplayer) return player.sendMessage('player not found')
+    console.warn(findplayer.name)
+});
   ```
 
 **Status:**
