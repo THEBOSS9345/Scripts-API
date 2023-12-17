@@ -1,6 +1,5 @@
 import { Player, world, system } from '@minecraft/server';
-
-const commands = [];
+export const commands = [];
 let CommandInitialized = false;
 
 Object.defineProperty(globalThis, 'ChatCommand', {
