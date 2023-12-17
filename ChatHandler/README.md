@@ -10,7 +10,8 @@ Experience effortless communication in Minecraft Bedrock with our ChatCommand Ha
 - **Future-Ready:** Periodic updates enhance functionality and introduce new features, keeping you ahead in the game.
 - **EX**:
 ```js
- import ChatCommand from './ChatCommands.js'
+ import ChatCommand from './ChatCommands.js';
+import {commands} from './ChatCommands.js';
 // way 1 to make commands
 ChatCommand.create('Help', 'Help Command: Shows all available commands', ['h', 'help'], false, false, (player) => {
     const helpMessage = commands
