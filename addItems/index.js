@@ -24,14 +24,3 @@ function addItems(player, items) {
     console.warn('inventory', error);
   }
 }
-
-
-world.getPlayers().map((player) => {
-  addItems(player, [
-    ["minecraft:diamond_chestplate", 1, [new Enchantment('mending', 1)]],
-    ["minecraft:diamond_boots", 1, [new Enchantment('mending', 1)]],
-    ["minecraft:diamond_leggings", 1, [new Enchantment('mending', 1)]],
-    ["minecraft:diamond_helmet", 1, [new Enchantment('mending', 1)]],
-    ['minecraft:bread', 1]
-  ])
-})
