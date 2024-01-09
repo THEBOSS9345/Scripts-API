@@ -5,7 +5,7 @@ The `addItems` function streamlines item management in Minecraft Bedrock server 
 
 **How to Use:**
 - **Parameters:**
-  - `player`: The player object.
+  - `player`: The player class.
   - `items`: An array representing items to add, structured as [item, count, enchants].
   - `enchants`: Optional array of enchantments to apply to the items.
 
