@@ -38,11 +38,7 @@ ChatCommand.create('find', 'find player', ['d ssd ds'], { 'target': 'string' }, 
 });
 
 // way 4 to commands
-ChatCommand('help', 'Server', [], {
-    'target': 'string',
-    'page': 'number',
-    required: ['target']
-}, false, ((player) => {
+ChatCommand('help', 'Server', [], { 'target': 'string', 'page': 'number', required: ['target'] }, false, ((player) => {
     let message = commands.map((data) => {
         return [
             `§e${data.command}§r`,
