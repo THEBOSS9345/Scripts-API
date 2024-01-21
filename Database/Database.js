@@ -6,23 +6,27 @@ Object.defineProperty(globalThis, 'Database', {
             /**
              * Set a value in the database.
              * @param {string} key - The database key.
-             * @param {boolean | number | string} value - The value to set.
+             * @param {boolean | number | string | object} value - The value to set.
              * @param {Player} [player=null] - The player for whom to set the database (default: null, i.e., set to world).
              * @example
              * set('auction', JSON.stringify({'dirt': 1})) // set to world
              * set('auction', JSON.stringify({'dirt': 1}), player) // set to player
              */
             set(key, value, player = null) {
+                if (typeof value === 'undefined' || isNaN(value) || value === null) throw new Error('Invalid value');
+                if (typeof value === 'object') value = JSON.stringify(value);
                 (player || world).setDynamicProperty(key, value);
             },
             /**
            * Get a value from the database.
            * @param {string} key - The database key.
            * @param {Player} [player=null] - The player from whom to get the database (default: null, i.e., get from world).
-           * @returns {boolean | number | string | null} The value of the specified key.
+           * @returns {boolean | number | string | object} The value of the specified key.
            */
             get(key, player = null) {
-                return (player || world).getDynamicProperty(key);
+                let value = (player || world).getDynamicProperty(key);
+                try { value = JSON.parse(value); } catch (e) {}
+                return value;
             },
             /**
             * Check if a key exists in the database.
@@ -47,9 +51,8 @@ Object.defineProperty(globalThis, 'Database', {
              * @returns {Array} An array of objects, each containing a dynamic property ID as a key and its corresponding value.
              */
             entries(player) {
-                return (player || world).getDynamicPropertyIds().map((value) => [value, (player || world).getDynamicProperty(value)])
+                return (player || world).getDynamicPropertyIds().map((value) => [value, this.get(value, (player || world))]);
             }
         };
     }
 });
-export default globalThis.Database;
