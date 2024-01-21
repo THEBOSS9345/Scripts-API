@@ -4,50 +4,18 @@
   
   ## Usage
   
-  This module exports a database object directly. To use it, require the module in your project:
-  
-  ```javascript
-  import Database from './Database.js'
-  ```
-  
-  ### Storing Data
-   To store data to the database, use the `set` method:
-   ```js
+```js
 
-   Database.set('key', 'value') // store data to the world
-   Database.set('key', 'value', player) // store data to the player 
-  
-  ```
-  
-  
-  ### Retrieving Data
-  
-  To retrieve data from the database, use the `get` method:
-  
-  ```javascript
-  const value = Database.get('key'); // get the value from the world
-const value = Database.get('key', player); // get the value from the player
+import Database from './database.js'
 
-  ```
-  
-  ### Checking if a Key Exists
-  
-  To check if a key exists in the database, use the `has` method:
-  
-  ```javascript
-  const exists = Database.has('key'); // has the key in the world 
-  const exists = Database.has('key', player); // has the key in the player
-  ```
-  
-  ### Deleting Data
-  
-  To delete data from the database, use the `delete` method:
-  
-  ```javascript
-  Database.delete('key'); // delete from the world
-  Database.delete('key', player); // delete from the player
-  ```
-  
+world.beforeEvents.playerLeave.subscribe(({ player }) => {
+    const games = Database.get('games') || []
+    if (!games && games.some((v) => v.id === player.id)) {
+        Database.set('games', games.filter((v) => v.id !== player.id))
+        return world.sendMessage(`§a${player.name}§r left the game!`)
+    }
+})
+```
 
   ## Author
   
