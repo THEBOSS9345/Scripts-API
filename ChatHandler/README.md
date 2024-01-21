@@ -36,6 +36,22 @@ ChatCommand.create('find', 'find player', ['d ssd ds'], { 'target': 'string' }, 
     if (!findplayer) return player.sendMessage('player not found')
     console.warn(findplayer.name)
 });
+
+// way 4 to commands
+ChatCommand('help', 'Server', [], {
+    'target': 'string',
+    'page': 'number',
+    required: ['target']
+}, false, ((player) => {
+    let message = commands.map((data) => {
+        return [
+            `§e${data.command}§r`,
+            data.description.length > 0 ? `- §7Description: §f${data.description}` : '',
+            data.alias.length > 0 ? `- §7Alias: §f(§f${data.alias.join(', ')})` : '',
+        ].filter(Boolean);
+    }).join('\n').replace(',', '');
+    player.sendMessage(`§aAvailable Commands:\n${message}`);
+}))
   ```
 
 **Status:**
