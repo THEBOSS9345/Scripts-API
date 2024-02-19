@@ -1,10 +1,10 @@
-import { Player, world} from '@minecraft/server';
+import { Player, world } from '@minecraft/server';
 /**
  * @typedef {Object} ChatCommand
  * @property {string} command - The command name - ex: 'help'
  * @property {string} description - The command description - ex: 'Server'
  * @property {string[] | Array} alias - The command alias - ex: ['h']
- * @param {{[key: string]: 'number' | 'string' | 'boolean', required?: [string] | undefined}} args - The command arguments - ex: { 'target': 'string', 'page': 'number', required: ['target']} 
+ * @property {{[key: string]: 'number' | 'string' | 'boolean', required?: [string] | undefined}} args - The command arguments - ex: { 'target': 'string', 'page': 'number', required: ['target']} 
  * @property {(player: Player) => Boolean} permissions - The command permissions - ex: (player) => player.isOp()
  * @property {(player: Player, args: Object | undefined, commandString: string) => void} callback - The command callback - ex: (player, args, commandString) => { player.sendMessage('Hello World') }
  */
@@ -16,16 +16,14 @@ let CommandInitialized = false;
 
 /**
  * @function
- * @param {string} command - The command name - ex: 'help'
- * @param {string} description - The command description - ex: 'Server'
- * @param {string[]} alias - The command alias - ex: ['h']
- * @param {{[key: string]: 'number' | 'string' | 'boolean', required?: [string] | undefined}} args - The command arguments - ex: { 'target': 'string', 'page': 'number', required: ['target']}
- * @param {(player: Player) => Boolean} permissions - The command permissions - ex: (player) => player.isOp()
- * @param {(player: Player, args: Object | undefined, commandString: string) => void} callback - The command callback - ex: (player, args, commandString) => { player.sendMessage('Hello World') }
- * @return {void}
+ * @param {ChatCommand} CommandObject
+ * @returns {void}
  */
-export function ChatCommand(command, description, alias = [], args = false, permissions = false, callback) {
-    commands.push({ command, description, args, alias, permissions, callback });
+export function ChatCommand(CommandObject /**@type {{command, description, alias, args, permissions, callback}}*/) {
+    if (!CommandObject.command || !CommandObject.command.length === 0) throw new Error('command Name is required');
+    commands.push(Object.assign({ description: '', alias: [], args: false, permissions: false, callback: () => { } }, CommandObject));
+    console.warn(`Command ${CommandObject.command} has been registered`);
+    console.warn(JSON.stringify(commands, null, 2), commands.find(({ command }) => command === CommandObject.command));
     if (CommandInitialized) return;
     CommandInitialized = true;
     world.beforeEvents.chatSend.subscribe((data) => {
