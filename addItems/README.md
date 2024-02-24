@@ -12,7 +12,8 @@ The `addItems` function streamlines item management in Minecraft Bedrock server 
 **Example:**
 ```javascript
 addItems(player, [
-  ["minecraft:diamond_sword", 1, [new Enchantment('sharpness', 3)]],
-  ["minecraft:iron_armor", 1, [new Enchantment('protection', 2)]],
-  ["minecraft:golden_apple", 5]
-]);
+    ["minecraft:diamond_sword", 1, [{type: 'sharpness', level: 1}],
+    ["minecraft:iron_armor", 1, [{type: 'protection', level: 1}],
+    ["minecraft:golden_apple", 5]
+  ]
+]])
