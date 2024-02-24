@@ -23,7 +23,6 @@ export function ChatCommand(CommandObject /**@type {{command, description, alias
     if (!CommandObject.command || !CommandObject.command.length === 0) throw new Error('command Name is required');
     commands.push(Object.assign({ description: '', alias: [], args: false, permissions: false, callback: () => { } }, CommandObject));
     console.warn(`Command ${CommandObject.command} has been registered`);
-    console.warn(JSON.stringify(commands, null, 2), commands.find(({ command }) => command === CommandObject.command));
     if (CommandInitialized) return;
     CommandInitialized = true;
     world.beforeEvents.chatSend.subscribe((data) => {
