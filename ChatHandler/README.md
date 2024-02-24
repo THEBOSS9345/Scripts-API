@@ -10,44 +10,52 @@ Experience effortless communication in Minecraft Bedrock with our ChatCommand Ha
 - **Future-Ready:** Periodic updates enhance functionality and introduce new features, keeping you ahead in the game.
 - **EX**:
 ```js
- import ChatCommand from './ChatCommands.js';
-import {commands} from './ChatCommands.js';
-// way 1 to make commands
-ChatCommand.create('Help', 'Help Command: Shows all available commands', ['h', 'help'], false, false, (player) => {
-    const helpMessage = commands
-        .filter(command => !command.permissions || command.permissions(player))
-        .map(command => {
-            const alias = command.alias.length > 0 ? `[${command.alias.join(', ')}] ` : '';
-            const description = command.description ? command.description : '';
-            return `§7${command.command} - ${alias}${description}`;
-        })
-        .join('\n');
-    player.sendMessage(`§aAvailable Commands\n${helpMessage}\n`);
-});
+import { world } from '@minecraft/server';
+import ChatCommand from './index.js';
+import {commands} from './index.js';
 
-//  way 2 make commands
-ChatCommand.create('test', 'testing command', ['test'], false, (player => player.hasTag('test')), ((player, _, commandString) => {
-    player.sendMessage(`${player.name}, ${commandString}`) 
-}))
+// way 1 to make commands
+ChatCommand({
+    command: 'help',
+    description: 'Server Help Command',
+    alias: ['h'],
+    callback: (player) => {
+        const helpMessage = commands
+            .filter(command => !command.permissions || command.permissions(player))
+            .map(command => {
+                const alias = command.alias.length > 0 ? `[${command.alias.join(', ')}] ` : '';
+                const description = command.description ? command.description : '';
+                return `§7${command.command} - ${alias}${description}`;
+            })
+            .join('\n');
+        player.sendMessage(`§aAvailable Commands\n${helpMessage}\n`);
+    }
+})
+
+// way 2 to make commands
+
+ChatCommand({
+    command: 'ping',
+    description: 'Server Ping Command',
+    alias: ['p'],
+    permissions: (player) => player.isOp(),
+    callback: (player) => {
+        player.sendMessage('§aPong');
+    }
+})
 
 // way 3 to make commands
-ChatCommand.create('find', 'find player', ['d ssd ds'], { 'target': 'string' }, false, (player, args) => {
-    const findplayer = world.getPlayers({name: `${args['target']?.split('"')[1]}`})[0]
-    if (!findplayer) return player.sendMessage('player not found')
-    console.warn(findplayer.name)
-});
 
-// way 4 to commands
-ChatCommand('help', 'Server', [], { 'target': 'string', 'page': 'number', required: ['target'] }, false, ((player) => {
-    let message = commands.map((data) => {
-        return [
-            `§e${data.command}§r`,
-            data.description.length > 0 ? `- §7Description: §f${data.description}` : '',
-            data.alias.length > 0 ? `- §7Alias: §f(§f${data.alias.join(', ')})` : '',
-        ].filter(Boolean);
-    }).join('\n').replace(',', '');
-    player.sendMessage(`§aAvailable Commands:\n${message}`);
-}))
+ChatCommand({
+    command: 'say',
+    description: 'Server Say Message',
+    alias: ['s'],
+    args: { 'message': 'string', required: ['message'] },
+    permissions: (player) => player.isOp(),
+    callback: (player, args) => {
+        world.sendMessage(args.message);
+    }
+})
   ```
 
 **Status:**
