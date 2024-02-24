@@ -1,4 +1,4 @@
-import { Player, Entity, system, world, ItemStack, Enchantment, EnchantmentTypes, EnchantmentType } from "@minecraft/server";
+import { Player, system, ItemStack, Enchantment } from "@minecraft/server";
 
 /**
  * Adds items to a player's inventory.
@@ -9,18 +9,16 @@ import { Player, Entity, system, world, ItemStack, Enchantment, EnchantmentTypes
  */
 
 function addItems(player, items) {
-  try {
-    const inv = player.getComponent('inventory').container;
-    for (let [item, count, enchants] of items) {
-      const itemStack = new ItemStack(item, count)
-      if (enchants && enchants.length > 0) {
-        const enchantComp = itemStack.getComponent("minecraft:enchantments").enchantments;
-        for (const enchant of enchants) enchantComp.addEnchantment(enchant);
-        itemStack.getComponent("minecraft:enchantments").enchantments = enchantComp;
-      }
-      inv.addItem(itemStack);
-    }
-  } catch (error) {
-    console.warn('inventory', error);
-  }
+    system.run(() => {
+        const inv = player.getComponent('inventory').container;
+        for (let [item, count, enchants] of items) {
+            const itemStack = new ItemStack(item, count)
+            if (enchants && enchants.length > 0) {
+                const enchantComp = itemStack.getComponent("enchantable")
+                for (const enc of enchants) console.log(JSON.stringify(enc))
+                for (const enchant of enchants) enchantComp.addEnchantment(enchant);
+            }
+            inv.addItem(itemStack);
+        }
+    })
 }
