@@ -56,3 +56,5 @@ Object.defineProperty(globalThis, 'Database', {
         };
     }
 });
+
+export { Database }
